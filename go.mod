@@ -1,4 +1,4 @@
-module authosaurous
+module authosaur
 
 go 1.23.0
 

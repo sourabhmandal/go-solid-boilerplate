@@ -1,8 +1,8 @@
 package main
 
 import (
-	"authosaurous/pkg/database"
-	"authosaurous/web"
+	"authosaur/pkg/database"
+	"authosaur/web"
 	"fmt"
 	"log"
 	"net/http"

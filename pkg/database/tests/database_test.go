@@ -1,7 +1,7 @@
 package database_test
 
 import (
-	"authosaurous/pkg/database"
+	"authosaur/pkg/database"
 	"context"
 	"log"
 	"strconv"

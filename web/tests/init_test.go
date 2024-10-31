@@ -1,7 +1,7 @@
 package web_test
 
 import (
-	"authosaurous/pkg/testutils"
+	"authosaur/pkg/testutils"
 	"context"
 	"os"
 	"testing"

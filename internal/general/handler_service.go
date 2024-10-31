@@ -1,7 +1,7 @@
 package general
 
 import (
-	"authosaurous/pkg/database"
+	"authosaur/pkg/database"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

@@ -1,10 +1,10 @@
 package web
 
 import (
-	"authosaurous/internal/general"
-	"authosaurous/internal/repository"
-	"authosaurous/internal/user"
-	"authosaurous/pkg/database"
+	"authosaur/internal/general"
+	"authosaur/internal/repository"
+	"authosaur/internal/user"
+	"authosaur/pkg/database"
 	"context"
 	"fmt"
 	"log"

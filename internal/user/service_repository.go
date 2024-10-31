@@ -1,7 +1,7 @@
 package user
 
 import (
-	"authosaurous/internal/repository"
+	"authosaur/internal/repository"
 	"errors"
 	"strconv"
 

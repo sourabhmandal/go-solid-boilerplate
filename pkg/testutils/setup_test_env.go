@@ -1,8 +1,8 @@
 package testutils
 
 import (
-	"authosaurous/pkg/database"
-	"authosaurous/web"
+	"authosaur/pkg/database"
+	"authosaur/web"
 	"context"
 	"log"
 	"net/http"
