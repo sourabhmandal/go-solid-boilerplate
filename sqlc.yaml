@@ -7,8 +7,8 @@ sql:
       - "internal/schema/user_schema.sql"
     gen:
       go:
-        package: "user"
-        out: "internal/user"
+        package: "repository"
+        out: "internal/repository"
         sql_package: "pgx/v5"
         emit_interface: true
         emit_db_tags: true
@@ -16,4 +16,3 @@ sql:
         emit_result_struct_pointers: true
         emit_params_struct_pointers: true
         emit_pointers_for_null_types: true
-        output_querier_file_name: repository.go

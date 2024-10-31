@@ -1,21 +1,23 @@
 package user
 
 import (
+	"authosaurous/internal/repository"
 	"errors"
-	"golang.org/x/net/context"
 	"strconv"
+
+	"golang.org/x/net/context"
 )
 
-type UserUseCaseSqlc struct {
-	userRepository Querier
+type userServiceSqlc struct {
+	userRepository repository.Querier
 }
 
-func NewUserUseCase(userRepo Querier) *UserUseCaseSqlc {
-	return &UserUseCaseSqlc{userRepository: userRepo}
+func NewUserService(userRepo repository.Querier) UserService {
+	return &userServiceSqlc{userRepository: userRepo}
 }
 
 // RegisterUser registers a new user in the system.
-func (u *UserUseCaseSqlc) RegisterUser(ctx context.Context, name, email string) error {
+func (u *userServiceSqlc) RegisterUser(ctx context.Context, name, email string) error {
 	// Check if the user already exists based on email
 	existingUser, err := u.userRepository.GetUserByEmail(ctx, email)
 	if err != nil {
@@ -26,7 +28,7 @@ func (u *UserUseCaseSqlc) RegisterUser(ctx context.Context, name, email string) 
 	}
 
 	// Create a new user in the schema
-	_, err = u.userRepository.CreateUser(ctx, &CreateUserParams{
+	_, err = u.userRepository.CreateUser(ctx, &repository.CreateUserParams{
 		Email: email,
 		Name:  name,
 		Bio:   nil, // Assuming empty bio for new user
@@ -38,7 +40,7 @@ func (u *UserUseCaseSqlc) RegisterUser(ctx context.Context, name, email string) 
 }
 
 // GetUserByID retrieves a user by their ID.
-func (u *UserUseCaseSqlc) GetUserByID(ctx context.Context, userID string) (*User, error) {
+func (u *userServiceSqlc) GetUserByID(ctx context.Context, userID string) (*repository.User, error) {
 	// Convert userID to int64 if necessary
 	id, err := strconv.ParseInt(userID, 10, 64)
 	if err != nil {

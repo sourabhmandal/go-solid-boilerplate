@@ -1,4 +1,4 @@
-# Project authosaurus
+# Project authosaurous
 
 One Paragraph of project description goes here
 

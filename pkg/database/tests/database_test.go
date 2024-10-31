@@ -1,8 +1,10 @@
-package database
+package database_test
 
 import (
+	"authosaurous/pkg/database"
 	"context"
 	"log"
+	"strconv"
 	"testing"
 	"time"
 
@@ -10,6 +12,9 @@ import (
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
+
+var dbInst database.Database
+
 
 func mustStartPostgresContainer() (func(context.Context) error, error) {
 	var (
@@ -32,11 +37,6 @@ func mustStartPostgresContainer() (func(context.Context) error, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	database = dbName
-	password = dbPwd
-	username = dbUser
-
 	dbHost, err := dbContainer.Host(context.Background())
 	if err != nil {
 		return dbContainer.Terminate, err
@@ -47,9 +47,8 @@ func mustStartPostgresContainer() (func(context.Context) error, error) {
 		return dbContainer.Terminate, err
 	}
 
-	host = dbHost
-	port = dbPort.Port()
-
+	port, _ := strconv.Atoi(dbPort.Port())
+	database.NewDatabasePg(dbName, dbPwd, dbHost, dbUser, "public", port)
 	return dbContainer.Terminate, err
 }
 
@@ -67,16 +66,13 @@ func TestMain(m *testing.M) {
 }
 
 func TestNew(t *testing.T) {
-	srv := New()
-	if srv == nil {
+	if dbInst == nil {
 		t.Fatal("New() returned nil")
 	}
 }
 
 func TestHealth(t *testing.T) {
-	srv := New()
-
-	stats := srv.Health()
+	stats := dbInst.Health()
 
 	if stats["status"] != "up" {
 		t.Fatalf("expected status to be up, got %s", stats["status"])
@@ -92,9 +88,7 @@ func TestHealth(t *testing.T) {
 }
 
 func TestClose(t *testing.T) {
-	srv := New()
-
-	if srv.Close() != nil {
+	if dbInst.Close() != nil {
 		t.Fatalf("expected Close() to return nil")
 	}
 }

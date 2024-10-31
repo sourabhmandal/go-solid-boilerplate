@@ -1,20 +1,21 @@
 package user
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-type UserHandler struct {
-	userUseCase UserUseCase
+type userHandler struct {
+	userService UserService
 }
 
-func NewUserHandler(userUseCase UserUseCase) *UserHandler {
-	return &UserHandler{userUseCase: userUseCase}
+func NewUserHandler(userService UserService) UserHandler {
+	return &userHandler{userService: userService}
 }
 
 // RegisterUser handles HTTP requests for registering a new user.
-func (h *UserHandler) RegisterUser(c *gin.Context) {
+func (h *userHandler) RegisterUser(c *gin.Context) {
 	// Define a struct to capture JSON data from the request body
 	type RegisterUserRequest struct {
 		Name  string `json:"name"`
@@ -29,7 +30,7 @@ func (h *UserHandler) RegisterUser(c *gin.Context) {
 	}
 
 	// Call the RegisterUser method from the use case layer
-	err := h.userUseCase.RegisterUser(c.Request.Context(), req.Name, req.Email)
+	err := h.userService.RegisterUser(c.Request.Context(), req.Name, req.Email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register user"})
 		return
@@ -40,7 +41,7 @@ func (h *UserHandler) RegisterUser(c *gin.Context) {
 }
 
 // GetUserByID handles HTTP requests to retrieve a user by their ID.
-func (h *UserHandler) GetUserByID(c *gin.Context) {
+func (h *userHandler) GetUserByID(c *gin.Context) {
 	// Retrieve the userID from the path parameters
 	userID := c.Param("userID")
 	if userID == "" {
@@ -49,7 +50,7 @@ func (h *UserHandler) GetUserByID(c *gin.Context) {
 	}
 
 	// Call the GetUserByID method from the use case layer
-	user, err := h.userUseCase.GetUserByID(c.Request.Context(), userID)
+	user, err := h.userService.GetUserByID(c.Request.Context(), userID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return

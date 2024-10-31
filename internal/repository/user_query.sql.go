@@ -3,7 +3,7 @@
 //   sqlc v1.27.0
 // source: user_query.sql
 
-package user
+package repository
 
 import (
 	"context"

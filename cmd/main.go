@@ -1,58 +1,37 @@
 package main
 
 import (
-	"context"
+	"authosaurous/pkg/database"
+	"authosaurous/web"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"os/signal"
 	"strconv"
-	"syscall"
-	"time"
-
-	"github.com/gin-gonic/gin"
 
 	_ "github.com/joho/godotenv/autoload"
-	userhandler "github.com/supareel/authosaurous/internal/user"
 )
 
-func gracefulShutdown(apiServer *, done chan bool) {
-	// Create context that listens for the interrupt signal from the OS.
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer stop()
 
-	// Listen for the interrupt signal.
-	<-ctx.Done()
-
-	log.Println("shutting down gracefully, press Ctrl+C again to force")
-
-	// The context is used to inform the server it has 5 seconds to finish
-	// the request it is currently handling
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	if err := apiServer.Shutdown(ctx); err != nil {
-		log.Printf("Server forced to shutdown with error: %v", err)
-	}
-
-	log.Println("Server exiting")
-
-	// Notify the main goroutine that the shutdown is complete
-	done <- true
-}
 
 func main() {
-
-
 	// Create a done channel to signal when the shutdown is complete
 	done := make(chan bool, 1)
 
+	serverPort, _ := strconv.Atoi(os.Getenv("SERVER_PORT"))
+	databaseName := os.Getenv("DB_DATABASE")
+	password   := os.Getenv("DB_PASSWORD")
+	username   := os.Getenv("DB_USERNAME")
+	host       := os.Getenv("DB_HOST")
+	dbport, _ := strconv.Atoi(os.Getenv("DB_PORT"))
+	schema     := os.Getenv("DB_SCHEMA")
+
+	dbInst, db := database.NewDatabasePg(username, password, host, databaseName, schema, dbport)
+	newServer := web.NewHttpServer(serverPort, dbInst, db)
 	// Run graceful shutdown in a separate goroutine
-	go gracefulShutdown(newServer, done)
+	go newServer.GracefulShutdown(done)
 
-	err := newServer.Run("")
-	if err != nil && err != http.ErrServerClosed {
-
+	if err:= newServer.Start();err != nil && err != http.ErrServerClosed {
 		panic(fmt.Sprintf("http server error: %s", err))
 	}
 
