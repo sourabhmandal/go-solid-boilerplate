@@ -122,16 +122,20 @@ func gracefulShutdown(done chan bool, server *http.Server, db database.Database)
 
 
 func migrateDatabase(username, password, host, databaseName, schema string, dbport int) {
-	connStr := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable&search_path=%s", 
-	username, password, host, dbport, databaseName, schema)
-	m, err := migrate.New("file://pkg/schema", connStr)
-	if err != nil {
-		log.Fatalf("failed to create migrate instance: %v", err)
-	}
-
-	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-		log.Fatalf("failed to apply migrations: %v", err)
-	}
-
-	log.Println("Migrations applied successfully.")
+		// Construct the connection string
+		connStr := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable&search_path=%s", 
+			username, password, host, dbport, databaseName, schema)
+	
+		// Create a new migrate instance
+		m, err := migrate.New("file://pkg/schema", connStr)
+		if err != nil {
+			log.Fatalf("failed to create migrate instance: %v", err)
+		}
+	
+		// Apply migrations
+		if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+			log.Fatalf("failed to apply migrations: %v", err)
+		}
+	
+		log.Println("Migrations applied successfully.")
 }

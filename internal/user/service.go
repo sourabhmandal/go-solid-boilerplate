@@ -2,6 +2,7 @@ package user
 
 import (
 	"authosaur/internal/repository"
+	"database/sql"
 	"errors"
 	"fmt"
 	"strconv"
@@ -29,14 +30,8 @@ func NewUserService(userRepo repository.Querier) UserService {
 func (u *userServiceSqlc) RegisterUser(ctx context.Context, name, email string) error {
 	// Check if the user already exists based on email
 	existingUser, err := u.userRepository.GetUserByEmail(ctx, email)
-	if err != nil {
-		return err
-	}
-	if existingUser != nil {
-		return errors.New("user already exists")
-	}
-
-	// Create a new user in the schema
+	if err != nil && errors.Is(err, sql.ErrNoRows) {
+		// Create a new user in the schema
 	_, err = u.userRepository.CreateUser(ctx, &repository.CreateUserParams{
 		Email: email,
 		Name:  name,
@@ -45,6 +40,13 @@ func (u *userServiceSqlc) RegisterUser(ctx context.Context, name, email string) 
 	if err != nil {
 		return err
 	}
+	}else if existingUser != nil {
+		return errors.New("user already exists")
+	}else {
+		return err
+	}
+
+	
 	return nil
 }
 
