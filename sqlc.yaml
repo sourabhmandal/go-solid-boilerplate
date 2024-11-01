@@ -2,9 +2,9 @@ version: "2"
 sql:
   - engine: "postgresql"
     queries:
-      - "internal/schema/user_query.sql"
+      - "pkg/schema/user_query.sql"
     schema:
-      - "internal/schema/user_schema.sql"
+      - "pkg/schema/user_schema.sql"
     gen:
       go:
         package: "repository"

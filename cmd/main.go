@@ -6,6 +6,7 @@ import (
 	"authosaur/internal/user"
 	"authosaur/pkg/database"
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -18,14 +19,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 	_ "github.com/joho/godotenv/autoload"
+
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/lib/pq"
 )
 
 
 
 func main() {
-	// Create a done channel to signal when the shutdown is complete
-	done := make(chan bool, 1)
-
 	serverPort, _ := strconv.Atoi(os.Getenv("SERVER_PORT"))
 	databaseName := os.Getenv("DB_DATABASE")
 	password   := os.Getenv("DB_PASSWORD")
@@ -34,8 +37,19 @@ func main() {
 	dbport, _ := strconv.Atoi(os.Getenv("DB_PORT"))
 	schema     := os.Getenv("DB_SCHEMA")
 
+	// Declare a flag to run migrations only
+  migrateFlag := flag.Bool("migrate", false, "run migrations only")
+	// Parse the flags
+	flag.Parse()
+
+	if *migrateFlag {
+		migrateDatabase(username, password, host, databaseName, schema, dbport)
+		return
+	}
+	// Create a done channel to signal when the shutdown is complete
+	done := make(chan bool, 1)
+
 	dbInst, db := database.NewDatabasePg(username, password, host, databaseName, schema, dbport)
-	
 	
 	newServer := &http.Server{
 		Addr:    fmt.Sprintf(":%d", serverPort),
@@ -104,4 +118,20 @@ func gracefulShutdown(done chan bool, server *http.Server, db database.Database)
 
 	// Notify the main goroutine that the shutdown is complete
 	done <- true
+}
+
+
+func migrateDatabase(username, password, host, databaseName, schema string, dbport int) {
+	connStr := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable&search_path=%s", 
+	username, password, host, dbport, databaseName, schema)
+	m, err := migrate.New("file://pkg/schema", connStr)
+	if err != nil {
+		log.Fatalf("failed to create migrate instance: %v", err)
+	}
+
+	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+		log.Fatalf("failed to apply migrations: %v", err)
+	}
+
+	log.Println("Migrations applied successfully.")
 }

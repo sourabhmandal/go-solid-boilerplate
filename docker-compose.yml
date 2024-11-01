@@ -1,5 +1,5 @@
 services:
-  psql_bp:
+  psql:
     image: postgres:latest
     restart: unless-stopped
     environment:
@@ -9,7 +9,7 @@ services:
     ports:
       - "${DB_PORT}:5432"
     volumes:
-      - psql_volume_bp:/var/lib/postgresql/data
+      - psql_volume:/var/lib/postgresql/data
 
 volumes:
-  psql_volume_bp:
+  psql_volume:
