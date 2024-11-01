@@ -1,10 +1,10 @@
 # Project authosaur
 
-One Paragraph of project description goes here
+Open source authentication library in Golang
 
-## Getting Started
+- Easy to use auth
+- Easy to deploy
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
 ## MakeFile
 
@@ -32,19 +32,9 @@ Shutdown DB Container
 make docker-down
 ```
 
-DB Integrations Test:
-```bash
-make itest
-```
-
 Live reload the application:
 ```bash
 make watch
-```
-
-Run the test suite:
-```bash
-make test
 ```
 
 Clean up binary from the last build:

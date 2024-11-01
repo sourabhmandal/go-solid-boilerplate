@@ -6,6 +6,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+
+type UserHandler interface {
+	RegisterUser(c *gin.Context)
+	GetUserByID(c *gin.Context)
+	GetAllUsers(c *gin.Context)
+
+}
+
+
+
 type userHandler struct {
 	userService UserService
 }
@@ -58,4 +68,17 @@ func (h *userHandler) GetUserByID(c *gin.Context) {
 
 	// Respond with the user data in JSON format
 	c.JSON(http.StatusOK, user)
+}
+
+func (h *userHandler) GetAllUsers(c *gin.Context) {
+
+	// Call the GetUserByID method from the use case layer
+	users, err := h.userService.GetAllUsers(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Users not found"})
+		return
+	}
+
+	// Respond with the user data in JSON format
+	c.JSON(http.StatusOK, users)
 }

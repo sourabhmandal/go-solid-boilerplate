@@ -6,6 +6,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+
+type GeneralHandler interface {
+	HealthCheck(c *gin.Context)
+}
+
 type generalHandler struct {
   db database.Database
 }
