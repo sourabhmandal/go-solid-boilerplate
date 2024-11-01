@@ -26,19 +26,17 @@ import (
 	_ "github.com/lib/pq"
 )
 
-
-
 func main() {
 	serverPort, _ := strconv.Atoi(os.Getenv("SERVER_PORT"))
 	databaseName := os.Getenv("DB_DATABASE")
-	password   := os.Getenv("DB_PASSWORD")
-	username   := os.Getenv("DB_USERNAME")
-	host       := os.Getenv("DB_HOST")
+	password := os.Getenv("DB_PASSWORD")
+	username := os.Getenv("DB_USERNAME")
+	host := os.Getenv("DB_HOST")
 	dbport, _ := strconv.Atoi(os.Getenv("DB_PORT"))
-	schema     := os.Getenv("DB_SCHEMA")
+	schema := os.Getenv("DB_SCHEMA")
 
 	// Declare a flag to run migrations only
-  migrateFlag := flag.Bool("migrate", false, "run migrations only")
+	migrateFlag := flag.Bool("migrate", false, "run migrations only")
 	// Parse the flags
 	flag.Parse()
 
@@ -50,7 +48,7 @@ func main() {
 	done := make(chan bool, 1)
 
 	dbInst, db := database.NewDatabasePg(username, password, host, databaseName, schema, dbport)
-	
+
 	newServer := &http.Server{
 		Addr:    fmt.Sprintf(":%d", serverPort),
 		Handler: registerRoutes(dbInst, db),
@@ -59,7 +57,7 @@ func main() {
 	go gracefulShutdown(done, newServer, dbInst)
 
 	// start the server
-	if err:= newServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+	if err := newServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		panic(fmt.Sprintf("http server error: %s", err))
 	}
 
@@ -67,7 +65,6 @@ func main() {
 	<-done
 	log.Println("Graceful shutdown complete.")
 }
-
 
 func registerRoutes(dbInst database.Database, db *pgx.Conn) *gin.Engine {
 	// Declare Router
@@ -78,8 +75,8 @@ func registerRoutes(dbInst database.Database, db *pgx.Conn) *gin.Engine {
 	// declare user handlers
 	userService := user.NewUserService(queries)
 	userHandlers := user.NewUserHandler(userService)
-	
-	router:= gin.Default()
+
+	router := gin.Default()
 	// generic routes
 	router.GET("/health", generalHandlers.HealthCheck)
 	// user routes
@@ -120,22 +117,21 @@ func gracefulShutdown(done chan bool, server *http.Server, db database.Database)
 	done <- true
 }
 
-
 func migrateDatabase(username, password, host, databaseName, schema string, dbport int) {
-		// Construct the connection string
-		connStr := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable&search_path=%s", 
-			username, password, host, dbport, databaseName, schema)
-	
-		// Create a new migrate instance
-		m, err := migrate.New("file://pkg/schema", connStr)
-		if err != nil {
-			log.Fatalf("failed to create migrate instance: %v", err)
-		}
-	
-		// Apply migrations
-		if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-			log.Fatalf("failed to apply migrations: %v", err)
-		}
-	
-		log.Println("Migrations applied successfully.")
+	// Construct the connection string
+	connStr := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable&search_path=%s",
+		username, password, host, dbport, databaseName, schema)
+
+	// Create a new migrate instance
+	m, err := migrate.New("file://pkg/schema", connStr)
+	if err != nil {
+		log.Fatalf("failed to create migrate instance: %v", err)
+	}
+
+	// Apply migrations
+	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+		log.Fatalf("failed to apply migrations: %v", err)
+	}
+
+	log.Println("Migrations applied successfully.")
 }

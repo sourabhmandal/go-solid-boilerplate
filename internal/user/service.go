@@ -17,7 +17,6 @@ type UserService interface {
 	// Other methods...
 }
 
-
 type userServiceSqlc struct {
 	userRepository repository.Querier
 }
@@ -32,21 +31,20 @@ func (u *userServiceSqlc) RegisterUser(ctx context.Context, name, email string) 
 	existingUser, err := u.userRepository.GetUserByEmail(ctx, email)
 	if err != nil && errors.Is(err, sql.ErrNoRows) {
 		// Create a new user in the schema
-	_, err = u.userRepository.CreateUser(ctx, &repository.CreateUserParams{
-		Email: email,
-		Name:  name,
-		Bio:   nil, // Assuming empty bio for new user
-	})
-	if err != nil {
-		return err
-	}
-	}else if existingUser != nil {
+		_, err = u.userRepository.CreateUser(ctx, &repository.CreateUserParams{
+			Email: email,
+			Name:  name,
+			Bio:   nil, // Assuming empty bio for new user
+		})
+		if err != nil {
+			return err
+		}
+	} else if existingUser != nil {
 		return errors.New("user already exists")
-	}else {
+	} else {
 		return err
 	}
 
-	
 	return nil
 }
 
@@ -57,14 +55,12 @@ func (u *userServiceSqlc) GetAllUsers(ctx context.Context) ([]*repository.User, 
 	users, err := u.userRepository.ListAllUsers(ctx)
 	fmt.Println(users, err)
 
-
 	if err != nil {
 		return nil, err
 	}
 
 	return users, nil
 }
-
 
 // GetUserByID retrieves a user by their ID.
 func (u *userServiceSqlc) GetUserByID(ctx context.Context, userID string) (*repository.User, error) {
