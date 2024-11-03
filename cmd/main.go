@@ -1,13 +1,13 @@
 package main
 
 import (
-	"authosaur/internal/general"
-	"authosaur/internal/repository"
-	"authosaur/internal/user"
-	"authosaur/pkg/database"
 	"context"
 	"flag"
 	"fmt"
+	"gosolid/internal/general"
+	"gosolid/internal/repository"
+	"gosolid/internal/user"
+	"gosolid/pkg/database"
 	"log"
 	"net/http"
 	"os"

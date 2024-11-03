@@ -1,10 +1,10 @@
 package user
 
 import (
-	"authosaur/internal/repository"
 	"database/sql"
 	"errors"
 	"fmt"
+	"gosolid/internal/repository"
 	"strconv"
 
 	"golang.org/x/net/context"

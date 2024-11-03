@@ -1,4 +1,4 @@
-module authosaur
+module gosolid
 
 go 1.23.0
 

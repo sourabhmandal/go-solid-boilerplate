@@ -1,4 +1,4 @@
-# Project authosaur
+# Project Go Solid Boilerplate
 
 Open source authentication library in Golang
 
