@@ -1,9 +1,6 @@
 # Project Go Solid Boilerplate
 
-Open source authentication library in Golang
-
-- Easy to use auth
-- Easy to deploy
+Open source Golang Application boilerplate
 
 
 ## MakeFile
