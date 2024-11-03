@@ -2,6 +2,9 @@
 
 Open source Golang Application boilerplate
 
+1. How do you structure a Golang project for production? | Golang Tutorial
+
+[![IMAGE ALT TEXT](https://i.ytimg.com/vi/I_FKeGXIaMs/hqdefault.jpg)](http://www.youtube.com/watch?v=I_FKeGXIaMs "How do you structure a Golang project for production? | Golang Tutorial")
 
 ## MakeFile
 
